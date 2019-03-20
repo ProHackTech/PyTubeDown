@@ -1,4 +1,4 @@
-# pyYouDown
+# pyTubeDown
 
 A small script to download youtube videos based on search terms using selenium. Multithreaded.
 
