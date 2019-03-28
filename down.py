@@ -66,10 +66,14 @@ def update_me():
 			version_me = float(line)
 	# read version file from github
 	hreq = httplib2.Http()
-	response_header,content=hreq.request("https://github.com/ProHackTech/pytubedown/blob/master/version.me","GET")
+	response_header,content=hreq.request("https://raw.githubusercontent.com/ProHackTech/pytubedown/master/version.me","GET")
 	content=content.decode()
 	content=float(content)
-	print(content)
+	# compare versions
+	if version_me < content:
+		print("update required")
+	else:
+		print("updated")
 
 parser = argparse.ArgumentParser(description="pytubedown: YouTube video downloader in Python")
 parser.add_argument("-t", "--topic", help="Enter topic name", type=str)
@@ -86,9 +90,9 @@ if isNetworkUp.ok==True:
 			get_vids(args.topic, args.scroll)
 		else:
 			get_vids(args.topic, 0)
-	else:
-		print(f"{error}Please specify a video topic{print_help}")
-	if args.update:
+	elif args.update:
 		update_me()
+	else:
+		print(f"{error}Please specify something{print_help}")
 else:
 	print(f"{error}Your internet is not working!{c_white}")
