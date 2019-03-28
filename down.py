@@ -63,11 +63,13 @@ def update_me():
 	# read current version
 	with open("version.me", "r") as fversion:
 		for line in fversion:
-			version_me = int(line)
+			version_me = line
+	version_me = int(version_me)
 	# read version file from github
 	hreq = httplib2.Http()
 	response_header,content=hreq.request("https://raw.githubusercontent.com/ProHackTech/pytubedown/master/version.me","GET")
 	content=content.decode()
+	content=int(content)
 	# compare versions
 	if version_me < content:
 		print("update required")
