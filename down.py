@@ -59,16 +59,15 @@ def get_vids(topic, scrl):
 		pbar.update(1) # update progress bar
 
 def update_me():
-	version_me = 0.0
+	version_me = 0
 	# read current version
 	with open("version.me", "r") as fversion:
 		for line in fversion:
-			version_me = float(line)
+			version_me = int(line)
 	# read version file from github
 	hreq = httplib2.Http()
 	response_header,content=hreq.request("https://raw.githubusercontent.com/ProHackTech/pytubedown/master/version.me","GET")
 	content=content.decode()
-	content=float(content)
 	# compare versions
 	if version_me < content:
 		print("update required")
