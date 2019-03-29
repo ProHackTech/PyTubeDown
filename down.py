@@ -1,4 +1,5 @@
-import threading,argparse,requests,httplib2
+import threading,argparse,requests,httplib2,sys
+from subprocess import Popen
 from support.colors import *
 from support.errors import *
 from time import sleep
@@ -58,21 +59,33 @@ def get_vids(topic, scrl):
 		ripper.join() # add thread to thread pool
 		pbar.update(1) # update progress bar
 
-def update_me():
+def read_git_version():
+	# read version file from github
+	hreq = httplib2.Http()
+	response_header,content=hreq.request("https://raw.githubusercontent.com/ProHackTech/pytubedown/master/version.me","GET")
+	content=content.decode()
+	content=int(content)
+	return content
+
+def read_my_version():
 	version_me = 0
 	# read current version
 	with open("version.me", "r") as fversion:
 		for line in fversion:
 			version_me = line
 	version_me = int(version_me)
-	# read version file from github
-	hreq = httplib2.Http()
-	response_header,content=hreq.request("https://raw.githubusercontent.com/ProHackTech/pytubedown/master/version.me","GET")
-	content=content.decode()
-	content=int(content)
+	return version_me
+
+def update_me():
+	version_me = read_my_version()
+	content = read_git_version()
 	# compare versions
 	if version_me < content:
-		print("update required")
+		# try determining python initials
+		get_initials=input("Enter your python command initials [EX: python3/python/py] >> ")
+		command=f"{get_initials} updater/update.py"
+		Popen(command, shell=True)
+		sys.exit()
 	else:
 		print("updated")
 
@@ -82,10 +95,11 @@ parser.add_argument("-scrl", "--scroll", help="Enter max scroll", type=int)
 parser.add_argument("-upd", "--update", help="Update pytubedown", action="store_true")
 args = parser.parse_args()
 
-# check internet connectivity
 isNetworkUp = requests.get("https://duckduckgo.com/")
 
 if isNetworkUp.ok==True:
+	my_version = read_my_version()
+	print(f"\n{c_green} Version: {c_white} {my_version}\n")
 	if args.topic:
 		if args.scroll:
 			get_vids(args.topic, args.scroll)
