@@ -87,7 +87,7 @@ def update_me():
 		Popen(command, shell=True)
 		sys.exit()
 	else:
-		print("updated")
+		print(f"{c_blue}Already Updated!{c_white}")
 
 parser = argparse.ArgumentParser(description="pytubedown: YouTube video downloader in Python")
 parser.add_argument("-t", "--topic", help="Enter topic name", type=str)
