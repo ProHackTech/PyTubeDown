@@ -13,10 +13,9 @@ def download_file(url,name):
 		urllib.request.urlretrieve(url, name)
 	except:
 		print(f"Error downloading: {url}")
+	update_dir(name)
 
 lines = open('files.txt').readlines()
-lineArr = [line.split(' || ') for line in lines]
+lineArray = [line.strip().split(' || ') for line in lines]
 for x in lineArray:
-	x.replace('\n','')
-	download_file(lineArr[0], lineArr[1])
-update_dir(name)
+	download_file(x[0], x[1])
