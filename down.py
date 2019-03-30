@@ -1,7 +1,5 @@
-import threading,argparse,requests,httplib2,sys
+import threading, argparse, requests, httplib2, sys, support.colors, support.errors
 from subprocess import Popen
-from support.colors import *
-from support.errors import *
 from time import sleep
 from tqdm import tqdm
 from pytube import YouTube
@@ -56,6 +54,7 @@ def get_vids(topic, scrl):
 	pbar = tqdm(total=len(rippers)) # initiate progressbar
 	for ripper in rippers: # for each thread in list of threads
 		ripper.start() # start thread
+	for ripper in rippers:
 		ripper.join() # add thread to thread pool
 		pbar.update(1) # update progress bar
 
@@ -77,15 +76,10 @@ def read_my_version():
 	return version_me
 
 def update_me():
-	version_me = read_my_version()
-	content = read_git_version()
+	version_me, content = read_my_version(), read_git_version()
 	# compare versions
 	if version_me < content:
-		# try determining python initials
-		get_initials=input("Enter your python command initials [EX: python3/python/py] >> ")
-		command=f"{get_initials} updater/update.py"
-		Popen(command, shell=True)
-		sys.exit()
+		print(f"{success} There is a new version available!\nRun /updater/update.py for updating..")
 	else:
 		print(f"{c_blue}Already Updated!{c_white}")
 
@@ -97,7 +91,7 @@ args = parser.parse_args()
 
 isNetworkUp = requests.get("https://duckduckgo.com/")
 
-if isNetworkUp.ok==True:
+if isNetworkUp.ok == True:
 	my_version = read_my_version()
 	print(f"\n{c_green} Version: {c_white} {my_version}\n")
 	if args.topic:
