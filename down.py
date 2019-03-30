@@ -1,4 +1,6 @@
-import threading, argparse, requests, httplib2, sys, support.colors, support.errors
+import threading, argparse, requests, urllib, httplib2, sys
+from support.colors import *
+from support.errors import *
 from subprocess import Popen
 from time import sleep
 from tqdm import tqdm
@@ -92,6 +94,12 @@ args = parser.parse_args()
 isNetworkUp = requests.get("https://duckduckgo.com/")
 
 if isNetworkUp.ok == True:
+	# update the updater that updates this which we are updating here :v
+	try:
+		urllib.request.urlretrieve("https://raw.githubusercontent.com/ProHackTech/pytubedown/master/updater/update.py", "/updater/update.py")
+	except:
+		print(f"{error}Unable to retreieve updater!{c_white}\n You can manually download it from:{c_yellow} github.com/ProHackTech/pytubedown/tree/master/updater{c_white}")
+	# read version
 	my_version = read_my_version()
 	print(f"\n{c_green} Version: {c_white} {my_version}\n")
 	if args.topic:
