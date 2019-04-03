@@ -1,4 +1,9 @@
-import threading, argparse, requests, urllib, httplib2, sys
+import threading
+import argparse
+import requests
+import urllib
+import httplib2
+import sys
 from support.colors import *
 from support.errors import *
 from subprocess import Popen
@@ -14,7 +19,7 @@ def remove_quotes(_string_):
 
 # replce blank space in string
 def replace_blank_space(_string_):
-	_string_=_string_.replace(' ','+')
+	_string_=_string_.replace(' ', '+')
 	return _string_
 
 # download vidos
