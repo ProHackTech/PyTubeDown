@@ -8,9 +8,9 @@
 Download YouTube videos & playlists using Python.
 
 ## Features
-[+] Multithreaded downloads
-[+] Download using keyword(s) {Search Terms}
-[+] Download playlist
+- [+] Multithreaded downloads
+- [+] Download using keyword(s) {Search Terms}
+- [+] Download playlist
 
 ## Requirements
 
