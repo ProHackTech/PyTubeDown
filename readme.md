@@ -15,6 +15,7 @@ Download YouTube videos & playlists using Python.
 ## Requirements
 
 ### System
+- Windows Operating System
 - Python 3
 - Selenium
 
