@@ -1,0 +1,3 @@
+git doen't register empty folder and it's bugging the updater.
+
+this is dummy file.
