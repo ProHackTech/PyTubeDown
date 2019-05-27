@@ -5,34 +5,23 @@
 	PyTubeDown
 </h1>
 
-Download YouTube videos & playlists using Python.
+<h3 align="center">
+	Download YouTube videos & playlists using Python
+</h3>
 
 ## Features
 - [+] Multithreaded downloads
-- [+] Download using keyword(s) {Search Terms}
 - [+] Download playlist
+- [+] Download using video URL
+- [+] Download using one keyword
+- [+] Download using multiple keywords
 
 ## Requirements
 
 ### System
-- Windows Operating System
+- Tested on Windows
 - Python 3
-- Selenium
-
-Currently supports Firefox driver
-
-### Packages Used
-- threading
-- argparse
-- requests
-- urllib
-- httplib2
-- sys
-- subprocess
-- time
-- tqdm
-- pytube
-- selenium
+- Selenium - Firefox gecko driver
 
 ## Usage
 
