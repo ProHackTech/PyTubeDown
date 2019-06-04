@@ -26,14 +26,19 @@ not_downloaded = []
 def download_video(video):
 	if video == "https://www.youtube.com/None":
 		print(f"{warning}Video 'None' type! Exiting..")
-		pass
+		exit()
 	else:
 		try:
 			YouTube(video).streams.first().download()
 			print(f"{success} Downloaded: {c_yellow}{video}{c_white}")
 		except:
-			print(f"{error}[-] {video}{c_white}")
-			not_downloaded.append(video)
+			# try again after timeout
+			sleep(3)
+			try:
+				download_video(video)
+			except:
+				print(f"{error}[-] {video}{c_white}")
+				not_downloaded.append(video)
 
 # thread creator \(~_~)/
 def thread_ripper(video_links):
@@ -172,6 +177,14 @@ def update_me():
 	else:
 		print(f"{c_blue}Already Updated!{c_white}")
 
+def networkIsUp():
+	try:
+		requests.get("https://duckduckgo.com/")
+		return True
+	except:
+		print(f"{error}Your internet is not working!{c_white}")
+		return False
+
 parser = argparse.ArgumentParser(description="pytubedown: YouTube video downloader in Python")
 parser.add_argument("-t", "--topic", help="Enter topic name", type=str)
 parser.add_argument("-scrl", "--scroll", help="Enter max scroll", type=int)
@@ -179,9 +192,6 @@ parser.add_argument("-upd", "--update", help="Update pytubedown", action="store_
 parser.add_argument("-pl", "--playlist", help="Download Playlist", type=str)
 parser.add_argument("-l", "--link", help="Single link download", type=str)
 args = parser.parse_args()
-
-# check if network is up
-isNetworkUp = requests.get("https://duckduckgo.com/")
 
 # ascii art
 print('''
@@ -192,11 +202,11 @@ print('''
 \\_/   /_/     \\_/  \\____/\\____/\\____\\____/\\____/\\_/  \\|\\_/  \\|
                                                                
 	''')
-# read version
-my_version = read_my_version()
-print(f"\n{c_green} Version: {c_white} {my_version}\n")
 
-if isNetworkUp.ok == True:
+if networkIsUp() == True:
+	# read version
+	my_version = read_my_version()
+	print(f"\n{c_green} Version: {c_white} {my_version}\n")
 	# update the updater that updates this which we are updating here :v
 	try:
 		urllib.request.urlretrieve("https://raw.githubusercontent.com/ProHackTech/pytubedown/master/updater/update.py", "updater/update.py")
@@ -219,5 +229,3 @@ if isNetworkUp.ok == True:
 		get_link(args.link)
 	else:
 		print(f"{error}Please specify something{print_help}")
-else:
-	print(f"{error}Your internet is not working!{c_white}")
