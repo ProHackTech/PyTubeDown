@@ -1,5 +1,0 @@
-https://raw.githubusercontent.com/ProHackTech/pytubedown/master/support/colors.py || support/colors.py
-https://raw.githubusercontent.com/ProHackTech/pytubedown/master/support/errors.py || support/errors.py
-https://raw.githubusercontent.com/ProHackTech/pytubedown/master/readme.md || readme.md
-https://raw.githubusercontent.com/ProHackTech/pytubedown/master/version.me || version.me
-https://raw.githubusercontent.com/ProHackTech/pytubedown/master/down.py || down.py
