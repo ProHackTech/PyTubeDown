@@ -1,8 +1,7 @@
 import threading
 import argparse
 import requests
-import urllib
-import httplib2
+import urllib.request, urllib.error, socket
 import sys
 from support.colors import c_white, c_green, c_red, c_yellow, c_blue
 from support.errors import error, warning, success, print_help
@@ -149,71 +148,66 @@ def get_link(url):
 	url = remove_quotes(url)
 	download_video(url)
 
-# reading git version of script
-def read_git_version():
-	# read version file from github
-	hreq = httplib2.Http()
-	response_header,content=hreq.request("https://raw.githubusercontent.com/ProHackTech/pytubedown/master/version.me","GET")
-	content = content.decode()
-	content = int(content)
-	return content
+# Function: Read VERSION.txt on GitHub
+def git_version():
+	response = urllib.request.urlopen("https://raw.githubusercontent.com/ProHackTech/PyTubeDown/master/VERSION.txt")
+	for content in response:
+		return int(content)
 
-# reading local version file
-def read_my_version():
-	version_me = 0
+# Function: Read local VERSION.txt file
+def my_version():
+	version_me = 1
 	# read current version
-	with open("version.me", "r") as fversion:
+	with open("VERSION.txt", "r") as fversion:
 		for line in fversion:
 			version_me = line
 	version_me = int(version_me)
 	return version_me
 
-# check for updates
-def update_me():
-	version_me, content = read_my_version(), read_git_version()
+# Function: To compare GitHub and Local version numbers
+def update_check():
+	version_me, content = my_version(), git_version()
 	# compare versions
 	if version_me < content:
-		print(f"{success} There is a new version available!\nRun /updater/update.py for updating..")
-	else:
-		print(f"{c_blue}Already Updated!{c_white}")
+		print(f"{c_green}[New Version Available]{c_yellow}There is a new version available!{c_white}\nRun {c_blue}/updater/update.py{c_white} for updating!")
+		version_diff = (content - version_me)
+		print(f"{c_green}[Running Behind] {c_yellow}>> {c_green}{version_diff} {c_white}versions\n\n")
+	elif version_me == content:
+		print(f"{c_green}[Running Latest] {c_yellow}>> {c_green}v{c_white}{version_me}\n\n")
+	elif version_me > content:
+		version_diff = (version_me - content)
+		print(f"{c_green}[Running Ahead] {c_yellow}>> {c_green}{version_diff} {c_white}versions\n\n")
 
-def networkIsUp():
-	try:
-		requests.get("https://duckduckgo.com/")
-		return True
-	except:
-		print(f"{error}Your internet is not working!{c_white}")
-		return False
-
-parser = argparse.ArgumentParser(description="pytubedown: YouTube video downloader in Python")
-parser.add_argument("-t", "--topic", help="Enter topic name", type=str)
-parser.add_argument("-scrl", "--scroll", help="Enter max scroll", type=int)
-parser.add_argument("-upd", "--update", help="Update pytubedown", action="store_true")
-parser.add_argument("-pl", "--playlist", help="Download Playlist", type=str)
-parser.add_argument("-l", "--link", help="Single link download", type=str)
-args = parser.parse_args()
-
-# ascii art
-print('''
- ____ ___  _ _____  _     ____  _____ ____  ____  _      _     
-/  __\\  \\///__ __\\/ \\ /\\/  _ \\/  __//  _ \\/  _ \\/ \\  /|/ \\  /|
-|  \\/| \\  /   / \\  | | ||| | //|  \\  | | \\|| / \\|| |  ||| |\\ ||
-|  __/ / /    | |  | \\_/|| |_\\|  /_ | |_/|| \\_/|| |/\\||| | \\||
-\\_/   /_/     \\_/  \\____/\\____/\\____\\____/\\____/\\_/  \\|\\_/  \\|
-                                                               
+# Function: displaying banner & update
+def banner():
+	print(f''' {c_red}
+______    _____     _         ______                    
+| ___ \  |_   _|   | |        |  _  \                   
+| |_/ /   _| |_   _| |__   ___| | | |_____      ___ __  
+|  __/ | | | | | | | '_ \ / _ \ | | / _ \ \ /\ / / '_ \ 
+| |  | |_| | | |_| | |_) |  __/ |/ / (_) \ V  V /| | | |
+\_|   \__, \_/\__,_|_.__/ \___|___/ \___/ \_/\_/ |_| |_|
+       __/ |                                            
+      |___/          {c_white}                                   
 	''')
 
-if networkIsUp() == True:
-	# read version
-	my_version = read_my_version()
-	print(f"\n{c_green} Version: {c_white} {my_version}\n")
-	# update the updater that updates this which we are updating here :v
-	try:
-		urllib.request.urlretrieve("https://raw.githubusercontent.com/ProHackTech/pytubedown/master/updater/update.py", "updater/update.py")
-	except:
-		print(f"{error}Unable to retreieve updater!{c_white}\n You can manually download it from:{c_yellow} github.com/ProHackTech/pytubedown/tree/master/updater{c_white}\n\n")
-	
-	# download via topic
+	print(f"\n[Version Check]...")
+	update_check()
+
+# Function: Initialize
+def init():
+	# banner
+	banner()
+
+	# argument parsing
+	parser = argparse.ArgumentParser(description="PyTubeDown")
+	parser.add_argument("-t", "--topic", help="Enter topic name", type=str)
+	parser.add_argument("-scrl", "--scroll", help="Enter max scroll", type=int)
+	parser.add_argument("-upd", "--update", help="Update pytubedown", action="store_true")
+	parser.add_argument("-pl", "--playlist", help="Download Playlist", type=str)
+	parser.add_argument("-l", "--link", help="Single link download", type=str)
+	args = parser.parse_args()
+
 	if args.topic:
 		if args.scroll:
 			get_vids(args.topic, args.scroll)
@@ -221,7 +215,7 @@ if networkIsUp() == True:
 			get_vids(args.topic, 0)
 	# update script
 	elif args.update:
-		update_me()
+		update_check()
 	# playlist download
 	elif args.playlist:
 		get_playlist(args.playlist)
@@ -229,3 +223,6 @@ if networkIsUp() == True:
 		get_link(args.link)
 	else:
 		print(f"{error}Please specify something{print_help}")
+
+if __name__ == "__main__":
+	init()
