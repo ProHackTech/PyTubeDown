@@ -1,6 +1,6 @@
 <h1 align="center">
 	<br>
-	<img src="https://raw.githubusercontent.com/ProHackTech/PyTubeDown/master/logo.png" alt="PyTubeDown Logo">
+	<img src="https://raw.githubusercontent.com/ProHackTech/PyTubeDown/master/logo.png" alt="PyTubeDown Logo" width="450" height="250">
 	<br>
 	PyTubeDown
 </h1>
