@@ -10,11 +10,11 @@
 </h3>
 
 ## Features
-- [+] Multithreaded downloads
-- [+] Download playlist
-- [+] Download using video URL
-- [+] Download using one keyword
-- [+] Download using multiple keywords
+- [x] Multithreaded downloads
+- [x] Download playlist
+- [x] Download using video URL
+- [x] Download using one keyword
+- [x] Download using multiple keywords
 
 ## Requirements
 
