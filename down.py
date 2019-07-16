@@ -1,42 +1,40 @@
-import threading
-import argparse
-import requests
+import threading, argparse, requests, sys, os
 import urllib.request, urllib.error, socket
-import sys
 from support.colors import c_white, c_green, c_red, c_yellow, c_blue
 from time import sleep
 from tqdm import tqdm
 from pytube import YouTube
 from selenium import webdriver
+from selenium.webdriver.firefox.options import Options
 
-# replace quotes in string
-def remove_quotes(_string_):
-	_string_=_string_.replace('"', '')
-	return _string_
 
-# replce blank space in string
-def replace_blank_space(_string_):
-	_string_=_string_.replace(' ', '+')
-	return _string_
+# Function: Clearing screen.. no hate pls. I need quick fixes
+def ClrScrn():
+	os.system('cls' if os.name == 'nt' else 'clear')
+
+# string replace operations
+# replace_type = quotes/space
+def string_replace(str, replace_type):
+	if replace_type == "quotes":
+		str = str.replace('"', '')
+		str = str.replace("'", "")
+	elif replace_type == "space":
+		str = str.replace(' ', '+')
+	return str
 
 # download vidos
 not_downloaded = []
 def download_video(video):
-	if video == "https://www.youtube.com/None":
-		print(f"{c_yellow}Video 'None' type! Exiting..")
+	if video == "https://www.youtube.com/None" or video == "None" or video == " None":
+		print(f"{c_red}[Error] >> Video 'None' type! Exiting..")
 		exit()
 	else:
 		try:
+			print(f"{c_green}[Downloading] {c_yellow}>> {c_blue}{video}{c_white}")
 			YouTube(video).streams.first().download()
-			print(f"{c_green} Downloaded: {c_yellow}{video}{c_white}")
 		except:
-			# try again after timeout
-			sleep(3)
-			try:
-				download_video(video)
-			except:
-				print(f"{c_red}[-] {video}{c_white}")
-				not_downloaded.append(video)
+			print(f"{c_red}[-] {video}{c_white}")
+			not_downloaded.append(video)
 
 # thread creator \(~_~)/
 def thread_ripper(video_links):
@@ -47,8 +45,6 @@ def thread_ripper(video_links):
 	for ripper in rippers:
 		ripper.join() # add thread to thread pool
 		pbar.update(1) # update progress bar
-
-	sleep(2)
 
 	# try again for not downloaded: multi-theading again
 	rippers = [threading.Thread(target=download_video, args=(video,)) for video in not_downloaded] # create list of threads with target to download videos
@@ -62,11 +58,11 @@ def thread_ripper(video_links):
 	# if not_downloaded is not empty
 	if len(not_downloaded) > 0:
 		# print error message
-		print(f"{c_red}Unable to download following videos:")
+		print(f"{c_red}[Error] >> Unable to download following videos:")
 		# for each in not_downloaded,
 		for v in not_downloaded:
 			# print url
-			print(f"{c_yellow}{v}{c_white}")
+			print(f"{c_red}{v}{c_white}")
 		# reattempt the download
 		print("Reattempting.. in single thread mode")
 		for v in not_downloaded:
@@ -76,15 +72,17 @@ def thread_ripper(video_links):
 # generate video links
 def get_vids(topic, scrl):
 	video_links = [] # store video links in list
-	topic = remove_quotes(topic) # remove quotes from topic
-	topic = replace_blank_space(topic) # replace blank
+	topic = string_replace(topic, "quotes") # remove quotes from topic
+	topic = string_replace(topic, "space") # replace blank
 	site = f"https://www.youtube.com/results?search_query={topic}" # form the url
-	driver = webdriver.Firefox() # start webdriver
+	options = Options()
+	options.headless = True
+	driver = webdriver.Firefox(options=options) # start webdriver
 	driver.get(site) # open the url
 	exec_string = f"window.scrollTo(0, {scrl})" # make page scroll javascript with what user specified
-	sleep(3) # delay 3 seconds
+	sleep(1) # delay 3 seconds
 	driver.execute_script(exec_string) # execute the javascript on url page
-	sleep(5) # delay 5 seconds
+	sleep(2) # delay 5 seconds
 
 	# find video elements
 	video_titles = driver.find_elements_by_id("video-title")
@@ -104,7 +102,7 @@ def get_vids(topic, scrl):
 
 def get_playlist(url):
 	# remove quoted from the link
-	url = remove_quotes(url)
+	url = string_replace(url, "quotes")
 	playlist = "https://www.youtube.com/playlist?list="
 
 	# if the playlist is in watch mode
@@ -119,7 +117,9 @@ def get_playlist(url):
 	# get videos link in playlist
 	video_links = []
 	# define webdriver
-	driver = webdriver.Firefox()
+	options = Options()
+	options.headless = True
+	driver = webdriver.Firefox(options=options)
 	# get the playlist using selenium
 	driver.get(playlist)
 	sleep(5) # seconds
@@ -144,7 +144,7 @@ def get_playlist(url):
 
 # get get individual links
 def get_link(url):
-	url = remove_quotes(url)
+	url = string_replace(url, "quotes")
 	download_video(url)
 
 # Function: Read VERSION.txt on GitHub
@@ -179,6 +179,7 @@ def update_check():
 
 # Function: displaying banner & update
 def banner():
+	ClrScrn()
 	print(f''' {c_red}
 ______    _____     _         ______                    
 | ___ \  |_   _|   | |        |  _  \                   
