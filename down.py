@@ -4,7 +4,6 @@ import requests
 import urllib.request, urllib.error, socket
 import sys
 from support.colors import c_white, c_green, c_red, c_yellow, c_blue
-from support.errors import error, warning, success, print_help
 from time import sleep
 from tqdm import tqdm
 from pytube import YouTube
@@ -24,19 +23,19 @@ def replace_blank_space(_string_):
 not_downloaded = []
 def download_video(video):
 	if video == "https://www.youtube.com/None":
-		print(f"{warning}Video 'None' type! Exiting..")
+		print(f"{c_yellow}Video 'None' type! Exiting..")
 		exit()
 	else:
 		try:
 			YouTube(video).streams.first().download()
-			print(f"{success} Downloaded: {c_yellow}{video}{c_white}")
+			print(f"{c_green} Downloaded: {c_yellow}{video}{c_white}")
 		except:
 			# try again after timeout
 			sleep(3)
 			try:
 				download_video(video)
 			except:
-				print(f"{error}[-] {video}{c_white}")
+				print(f"{c_red}[-] {video}{c_white}")
 				not_downloaded.append(video)
 
 # thread creator \(~_~)/
@@ -63,7 +62,7 @@ def thread_ripper(video_links):
 	# if not_downloaded is not empty
 	if len(not_downloaded) > 0:
 		# print error message
-		print(f"{error}Unable to download following videos:")
+		print(f"{c_red}Unable to download following videos:")
 		# for each in not_downloaded,
 		for v in not_downloaded:
 			# print url
@@ -222,7 +221,7 @@ def init():
 	elif args.link:
 		get_link(args.link)
 	else:
-		print(f"{error}Please specify something{print_help}")
+		print(f"{c_red}Please specify something{c_white}")
 
 if __name__ == "__main__":
 	init()
